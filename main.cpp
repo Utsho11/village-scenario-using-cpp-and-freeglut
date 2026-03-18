@@ -1,59 +1,61 @@
 #include <GL/glut.h>
 
-// ──────────────────────────────────────────
-//  Window Settings
-// ──────────────────────────────────────────
-const int WIDTH  = 800;
-const int HEIGHT = 600;
-const char* TITLE = "CG Practice";
+void drawSky() {
+    // ── Sky ───────────────────────────────────
+    glBegin(GL_QUADS);
+        glColor3f(0.53f, 0.81f, 0.98f);  // light blue (top)
+        glVertex2f(-1.0f,  1.0f);         // top-left
+        glVertex2f( 1.0f,  1.0f);         // top-right
 
-// ──────────────────────────────────────────
-//  Display — put your drawing code here
-// ──────────────────────────────────────────
-void display() {
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    // TODO: draw your shapes here
-    glBegin(GL_TRIANGLES);
-        glColor3f(1, 0, 0); glVertex2f( 0.0f,  0.5f);
-        glColor3f(0, 1, 0); glVertex2f(-0.5f, -0.5f);
-        glColor3f(0, 0, 1); glVertex2f( 0.5f, -0.5f);
+        glColor3f(0.8f, 0.93f, 1.0f);    // pale blue (bottom of sky)
+        glVertex2f( 1.0f,  0.0f);         // bottom-right
+        glVertex2f(-1.0f,  0.0f);         // bottom-left
     glEnd();
 
-    glutSwapBuffers();
+    // ── Ground (Grass) ────────────────────────
+    glBegin(GL_QUADS);
+        glColor3f(0.24f, 0.60f, 0.17f);  // dark green (top of ground)
+        glVertex2f(-1.0f,  0.0f);         // top-left
+        glVertex2f( 1.0f,  0.0f);         // top-right
+
+        glColor3f(0.13f, 0.37f, 0.08f);  // deeper green (bottom)
+        glVertex2f( 1.0f, -1.0f);         // bottom-right
+        glVertex2f(-1.0f, -1.0f);         // bottom-left
+    glEnd();
 }
 
-// ──────────────────────────────────────────
-//  Keyboard — ESC to quit
-// ──────────────────────────────────────────
-void keyboard(unsigned char key, int x, int y) {
-    if (key == 27) exit(0);
-}
-
-// ──────────────────────────────────────────
-//  Init — one-time OpenGL settings
-// ──────────────────────────────────────────
 void init() {
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // black background
+    glClearColor(0.5f, 0.8f, 1.0f, 1.0f); // sky blue background
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluOrtho2D(-1.0, 1.0, -1.0, 1.0);     // 2D coordinate space
+    gluOrtho2D(-1.0, 1.0, -1.0, 1.0);     // 2D world space
 }
 
-// ──────────────────────────────────────────
-//  Main
-// ──────────────────────────────────────────
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT);           // clear screen
+
+    // drawing functions
+
+     drawSky();
+
+    glutSwapBuffers();                      // show the frame
+}
+
+void keyboard(unsigned char key, int x, int y) {
+    if (key == 27) exit(0);                // ESC to quit
+}
+
 int main(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-    glutInitWindowSize(WIDTH, HEIGHT);
+    glutInitWindowSize(800, 600);
     glutInitWindowPosition(100, 100);
-    glutCreateWindow(TITLE);
+    glutCreateWindow("Village Scene");
 
     init();
     glutDisplayFunc(display);
     glutKeyboardFunc(keyboard);
-
     glutMainLoop();
+
     return 0;
 }
