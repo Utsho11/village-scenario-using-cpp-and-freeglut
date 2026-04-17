@@ -1,6 +1,8 @@
 #include <GL/glut.h>
-// ───────────────── hills ─────────────────
-//
+#include <math.h>
+#define pi 3.1416
+
+float p,dx=0.1;
 // ── Reusable: draws a filled triangle ─────────────────
 void drawTriangle(float x1, float y1,
                   float x2, float y2,
@@ -12,98 +14,214 @@ void drawTriangle(float x1, float y1,
     glEnd();
 }
 
-void drawHills() {
-    // ── Layer 1: Farthest hills (lightest) ────────────
-    glColor3f(0.45f, 0.72f, 0.35f);
-    drawTriangle(-1.0f, 0.0f,  -0.7f, 0.55f,  -0.3f, 0.0f);
-    drawTriangle( 0.2f, 0.0f,   0.6f, 0.50f,   1.0f, 0.0f);
-
-    // snow caps — layer 1
-    glColor3f(1.0f, 1.0f, 1.0f);
-    drawTriangle(-0.77f, 0.43f,  -0.7f, 0.55f,  -0.61f, 0.43f);
-    drawTriangle( 0.48f, 0.38f,   0.6f, 0.50f,   0.70f, 0.38f);
-
-    // ── Layer 2: Mid hills (medium green) ─────────────
-    glColor3f(0.30f, 0.58f, 0.20f);
-    drawTriangle(-1.0f, 0.0f,  -0.5f, 0.38f,   0.1f, 0.0f);
-    drawTriangle( 0.0f, 0.0f,   0.5f, 0.42f,   1.0f, 0.0f);
-
-    // snow caps — layer 2
-    glColor3f(1.0f, 1.0f, 1.0f);
-    drawTriangle(-0.65f, 0.26f,  -0.5f, 0.38f,  -0.30f, 0.26f);
-    drawTriangle( 0.35f, 0.30f,   0.5f, 0.42f,   0.65f, 0.30f);
-
-    // ── Layer 3: Near hills (darkest) ─────────────────
-    glColor3f(0.18f, 0.45f, 0.10f);
-    drawTriangle(-1.0f, 0.0f,  -0.6f, 0.22f,  -0.1f, 0.0f);
-    drawTriangle(-0.2f, 0.0f,   0.2f, 0.30f,   0.6f, 0.0f);
-    drawTriangle( 0.5f, 0.0f,   0.8f, 0.20f,   1.0f, 0.0f);
-
-    // snow caps — layer 3
-    glColor3f(1.0f, 1.0f, 1.0f);
-    drawTriangle(-0.78f, 0.12f,  -0.6f, 0.22f,  -0.38f, 0.12f);
-    drawTriangle( 0.07f, 0.20f,   0.2f, 0.30f,   0.33f, 0.20f);
-    drawTriangle( 0.65f, 0.10f,   0.8f, 0.20f,   0.90f, 0.10f);
+void drawQuad(float x1, float y1,
+              float x2, float y2,
+              float x3, float y3,
+              float x4, float y4) {
+    glBegin(GL_QUADS);
+        glVertex2f(x1, y1);
+        glVertex2f(x2, y2);
+        glVertex2f(x3, y3);
+        glVertex2f(x4, y4);
+    glEnd();
 }
 
-// ───────────────── Sky ─────────────────
-void drawSky() {
+void drawCircle(float r,float x, float y,float d=360){
+    for(float i=0;i<=d;i+=0.5){
+        float theta = i * pi / 180;
+        float x1 = x + r*cos(theta);
+        float y1 = y + r*sin(theta);
+
+        glVertex2f(x1,y1);
+    }
+}
+
+// ───────────────── hills ─────────────────
+
+void drawHills() {
+    // 1st hill
+
+    glColor3f(0.3,0.5,0.7);
+    drawTriangle(80,400,170,400,125,450);
+    glColor3f(0.13f, 0.37f, 0.08f);
+    drawQuad(0,300,250,300,170,400,80,400);
+
+    for(int x=125;x<=750;x+=250){
+    glColor3f(0.9,0.9,0.9);
+        drawTriangle(80+x,400,170+x,400,125+x,450);
+    glColor3f(0.13f, 0.37f, 0.08f);
+        drawQuad(0+x,300,250+x,300,170+x,400,80+x,400);
+    }
+
+    for(int x=0;x<=1000;x+=250){
+    glColor3f(0.9,0.9,0.9);
+        drawTriangle(80+x,400,170+x,400,125+x,450);
+   glColor3f(0.24f, 0.60f, 0.17f);
+        drawQuad(0+x,300,250+x,300,170+x,400,80+x,400);
+    }
+
+
+
+}
+
+// ───────────────── sky ─────────────────
+void drawSkyGround() {
 
     glBegin(GL_QUADS);
         glColor3f(0.53f, 0.81f, 0.98f);  // light blue (top)
-        glVertex2f(-1.0f,  1.0f);         // top-left
-        glVertex2f( 1.0f,  1.0f);         // top-right
+        glVertex2f(0,  600);         // top-left
+        glVertex2f( 1000,  600);         // top-right
 
         glColor3f(0.8f, 0.93f, 1.0f);    // pale blue (bottom of sky)
-        glVertex2f( 1.0f,  0.0f);         // bottom-right
-        glVertex2f(-1.0f,  0.0f);         // bottom-left
+        glVertex2f( 1000,  300);         // bottom-right
+        glVertex2f(0,  300);         // bottom-left
     glEnd();
 
     // ── Ground (Grass) ────────────────────────
     glBegin(GL_QUADS);
         glColor3f(0.24f, 0.60f, 0.17f);  // dark green (top of ground)
-        glVertex2f(-1.0f,  0.0f);         // top-left
-        glVertex2f( 1.0f,  0.0f);         // top-right
+        glVertex2f(0,  0);         // top-left
+        glVertex2f( 0,  300);         // top-right
 
         glColor3f(0.13f, 0.37f, 0.08f);  // deeper green (bottom)
-        glVertex2f( 1.0f, -1.0f);         // bottom-right
-        glVertex2f(-1.0f, -1.0f);         // bottom-left
+        glVertex2f( 1000, 300);         // bottom-right
+        glVertex2f( 1000, 0);         // bottom-left
     glEnd();
 }
 
-void init() {
-    glClearColor(0.5f, 0.8f, 1.0f, 1.0f); // sky blue background
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluOrtho2D(-1.0, 1.0, -1.0, 1.0);     // 2D world space
+// ───────────────── river ─────────────────
+
+void drawRiver() {
+    // River body
+    glColor3f(0.0f, 0.6f, 1.0f);
+    glBegin(GL_QUADS);
+        glVertex2f(1000, 200);
+        glVertex2f(1000, 300);
+    glColor3f(0.0f, 0.63f, 1.0f);
+        glVertex2f(750, 300);
+        glVertex2f(650, 200);
+    glEnd();
+
+    glColor3f(0.0f, 0.65f, 1.0f);
+    glBegin(GL_QUADS);
+        glVertex2f(730, 200);
+        glVertex2f(1000, 200);
+        glVertex2f(1000, 0);
+        glVertex2f(600, 0);
+    glEnd();
+}
+
+// ───────────────── boat ─────────────────
+
+void drawBoat(){
+
+    p+=dx;
+
+    if (p > 100) {
+    dx = -0.1;
+    }
+
+    if (p < -100) {
+    dx = 0.1;
+    }
+
+
+    glColor3f(0.55f, 0.27f, 0.07f); // dark brown
+    drawQuad(700+p,100,900+p,100,850+p,50,750+p,50);
+    glBegin(GL_POLYGON);
+
+    glColor3f(0.70f, 0.50f, 0.23f);
+    for(float i=0;i<=180;i+=0.5){
+        float theta = i * pi / 180;
+        float x1 = p+800 + 60*cos(theta);
+        float y1 = 100 + 40*sin(theta);
+
+        glVertex2f(x1,y1);
+    }
+    glEnd();
+
+    glBegin(GL_LINES);
+
+    glColor3f(0,0,0);
+
+    for(int x=0;x<=40;x+=5){
+        glVertex2f(705+x+p,95-x);
+        glVertex2f(895-x+p,95-x);
+    }
+
+
+    glColor3f(1,1,1);
+
+     for(int x=0;x<=20;x+=10){
+        glVertex2f(760-x+p,130-x);
+        glVertex2f(840+x+p,130-x);
+    }
+
+     glVertex2f(770+p,100);
+     glVertex2f(770+p,133);
+     glVertex2f(780+p,100);
+     glVertex2f(780+p,137);
+     glVertex2f(790+p,100);
+     glVertex2f(790+p,139);
+     glVertex2f(800+p,100);
+     glVertex2f(800+p,140);
+     glVertex2f(810+p,100);
+     glVertex2f(810+p,140);
+     glVertex2f(820+p,100);
+     glVertex2f(820+p,138);
+     glVertex2f(830+p,100);
+     glVertex2f(830+p,135);
+
+    glEnd();
+
+    glutPostRedisplay();
+
+}
+
+// ───────────────── sun ─────────────────
+
+void drawSun(){
+    glColor3f(1.0f, 0.85f, 0.0f);
+    glBegin(GL_POLYGON);
+    drawCircle(30,850,550);
+    glEnd();
+}
+
+// ───────────────── hay ─────────────────
+
+void drawHay(){
+    glColor3f(0.3,0,0);
+    drawQuad(190,390,210,390,210,350,190,350);
+    glBegin(GL_POLYGON);
+    glColor3f(0.9f, 0.8f, 0.4f);
+    drawCircle(60,200,300);
+    glEnd();
+    drawQuad(140,300,260,300,270,200,130,200);
 }
 
 void display() {
     glClear(GL_COLOR_BUFFER_BIT);           // clear screen
 
     // drawing functions
-
-     drawSky();
+     drawSkyGround();
+     drawRiver();
      drawHills();
+     drawSun();
+     drawBoat();
+     drawHay();
 
     glutSwapBuffers();                      // show the frame
 }
 
-void keyboard(unsigned char key, int x, int y) {
-    if (key == 27) exit(0);                // ESC to quit
-}
 
 int main(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-    glutInitWindowSize(800, 600);
-    glutInitWindowPosition(100, 100);
-    glutCreateWindow("Village Scene");
-
-    init();
+    glutInitWindowSize(1000, 600);
+    glutCreateWindow("Lab");
+    glClearColor(1, 1, 1, 1);
+    gluOrtho2D(0, 1000, 0, 600);
     glutDisplayFunc(display);
-    glutKeyboardFunc(keyboard);
     glutMainLoop();
-
     return 0;
 }

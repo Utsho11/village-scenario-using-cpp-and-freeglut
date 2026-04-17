@@ -1,6 +1,7 @@
 # depslib dependency file v1.0
-1773813460 source:f:\study\computer graphics lab\village-scenario\main.cpp
+1776453358 source:f:\study\computer graphics lab\village-scenario\main.cpp
 	<GL/glut.h>
+	<math.h>
 
 1426328128 c:\users\utsho\downloads\compressed\freeglut\include\gl\glut.h
 	"freeglut_std.h"
